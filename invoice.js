@@ -185,27 +185,33 @@ let Invoice = (() => {
     <tr>
       <td></td>
       <td style="width: 27mm; font-weight: bold; text-align: right">Итого:</td>
-      <td style="width: 35mm; font-weight: bold; text-align: center">0.00</td>
+      <td style="width: 35mm; font-weight: bold; text-align: center">${totalSum(
+        invoice
+      )}</td>
     </tr>
     <tr>
       <td></td>
       <td style="width: 27mm; font-weight: bold; text-align: right">
-        В т.ч. НДС:
+        В т.ч. НДС (20%):
       </td>
-      <td style="width: 35mm; font-weight: bold; text-align: center">0.00</td>
+      <td style="width: 35mm; font-weight: bold; text-align: center">${totalVat(
+        invoice
+      )}</td>
     </tr>
     <tr>
       <td></td>
       <td style="width: 37mm; font-weight: bold; text-align: right">
         Итого с НДС:
       </td>
-      <td style="width: 35mm; font-weight: bold; text-align: center">0.00</td>
+      <td style="width: 35mm; font-weight: bold; text-align: center">${totalSum(
+        invoice
+      )}</td>
     </tr>
   </table>
 
   <br />
   <div style="font-size: 10pt">
-    Всего наименований 0 на сумму 0.00 рублей.<br />
+    Всего наименований ${totalNames(invoice)} на сумму ${totalSum(invoice)} руб.<br />
     <b>Ноль рублей 00 копеек</b>
   </div>
   <br /><br />
@@ -244,10 +250,16 @@ let Invoice = (() => {
         <td style="width: 13mm">${index + 1}</td>
         <td style="width: 17mm">${product.number}</td>
         <td>${product.name}</td>
-        <td style="width: 20mm">${product.quantity}</td>
-        <td style="width: 17mm">Шт.</td>
-        <td style="width: 27mm; text-align: center">${product.price}</td>
-        <td style="width: 27mm; text-align: center">Сумма</td>
+        <td style="width: 20mm; text-align: center">${parseInt(
+          product.quantity
+        )}</td>
+        <td style="width: 17mm; text-align: center">Шт.</td>
+        <td style="width: 35mm; text-align: center">${parseFloat(
+          product.price
+        ).toFixed(2)}</td>
+        <td style="width: 35mm; text-align: center">${(
+          parseInt(product.quantity) * parseFloat(product.price)
+        ).toFixed(2)}</td>
       </tr>`;
   }
 
@@ -259,6 +271,25 @@ let Invoice = (() => {
 
     return template;
   }
+
+  function totalSum(invoice) {
+    let total = 0;
+    invoice.productList.forEach((product) => {
+      total += parseFloat(product.price) * parseInt(product.quantity);
+    });
+
+    return total.toFixed(2);
+  }
+
+  function totalVat(invoice) {
+    let vat = totalSum(invoice) * 0.2;
+
+    return vat.toFixed(2);
+  }
+
+  function totalNames(invoice) {
+    return invoice.productList.length;
+  }
   class Invoice {
     constructor(config = {}) {
       this.date = new Date().toLocaleDateString("ru-RU");
@@ -266,15 +297,9 @@ let Invoice = (() => {
       this.productList = [
         {
           number: "12124",
-          name: "Имя товара",
-          quantity: "2",
-          price: "2122.50",
-        },
-        {
-          number: "34344",
-          name: "Еще один товара",
-          quantity: "5",
-          price: "20122.50",
+          name: "Playstation 5 Pro",
+          quantity: "1 шт.",
+          price: "97500 руб.",
         },
       ];
       this.templateCart = templateCart(this);

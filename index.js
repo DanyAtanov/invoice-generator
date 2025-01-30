@@ -2,14 +2,15 @@ import Invoice from "./invoice.js";
 
 //let invoice = new Invoice();
 let invoice = new Invoice({
- /*  productList: [
+	date: '12 апреля',
+  productList: [
     {
-      number: "34344",
-      name: "Еще один товара",
-      quantity: "5",
-      price: "20122.50",
+      number: "JPLS-30 AURA-3",
+      name: "JPLS-30 AURA-3 Лампа светодиодная,световой поток до 4200лм в режиме 5 цв.температур.",
+      quantity: "2шт",
+      price: "1222.50 руб",
     },
-  ], */
+  ],
 });
 
 console.log(invoice);
